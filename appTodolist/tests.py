@@ -103,3 +103,26 @@ class TaskViewTest(TestCase):
         html = template.render(context)
         # assert
         self.assertEquals(html, response.content)
+
+    def test_connection_add_task(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/add')
+        post_response = client.post('/tasks/add')
+        # assert
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
+
+
+    def test_view_add_task(self):
+        # arrange
+        client = Client()
+        task = {
+            'name': 'Test'
+        }
+        # act
+        post_response = client.post('/tasks/add', task)
+        # assert
+        task_db = Task.objects.filter(name='Test').first()
+        self.assertIsNotNone(task_db)
