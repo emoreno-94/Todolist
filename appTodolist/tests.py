@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from appTodolist.models import Task, TaskList
+from django.template import loader
 
 
 class TodoTest (TestCase):
@@ -84,7 +85,21 @@ class TaskViewTest(TestCase):
         # arrange
         client = Client()
         # act
-        response = client.get('/tasks')
+        get_response = client.get('/tasks/')
+        post_response = client.post('/tasks/')
         # assert
-        self.assertEquals(200, response.status_code)
-        
+        self.assertEquals(200, get_response.status_code)
+        self.assertEquals(405, post_response.status_code)
+
+    def test_render_html_view_task(self):
+        # arrange
+        client = Client()
+        context = {
+            'tasks': Task.objects.all()
+        }
+        # act
+        response = client.get('/tasks/')
+        template = loader.get_template('appTodoList/tasks.html')
+        html = template.render(context)
+        # assert
+        self.assertEquals(html, response.content)
