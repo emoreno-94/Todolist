@@ -126,3 +126,25 @@ class TaskViewTest(TestCase):
         # assert
         task_db = Task.objects.filter(name='Test').first()
         self.assertIsNotNone(task_db)
+
+    def test_connection_set_done(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/set-done')
+        post_response = client.post('/tasks/set-done')
+        # asserto
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
+
+    def test_view_set_done(self):
+        # arrange
+        client = Client()
+        task = Task(name="namename")
+        task.save()
+        db_task = Task.objects.filter(name="namename").first()
+        # act
+        post_response = client.post('/tasks/set-done', {"id": db_task.id})
+        db_task = Task.objects.filter(name="namename").first()
+        # assert
+        self.assertTrue(db_task.done)
