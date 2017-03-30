@@ -10,5 +10,10 @@
             <li>name: {{ task.name }}</li>
         {% endfor %}
         </ul>
+    <form action="{% url "tasks:add_task" %}" method="POST">
+        {% csrf_token %}
+        Nombre: <input type="text" name="name">
+        <button type="submit">Agregar</button>
+    </form>
     </body>
 </html>
