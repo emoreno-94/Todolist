@@ -5,11 +5,27 @@
         <title>Tasks</title>
     </head>
     <body>
-        <ul>
-        {% for task in tasks %}
-            <li>name: {{ task.name }}</li>
-        {% endfor %}
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Estado</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.name }}</td>
+                        <td>
+                            <form action="{% url "tasks:set_done_task" %}" method="POST">
+                                <input type="hidden" value="{{ task.id }}" name="id">
+                                <button type="submit" {% if task.done %} disabled {% endif %}>{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     <form action="{% url "tasks:add_task" %}" method="POST">
         Nombre: <input type="text" name="name">
         <button type="submit">Agregar</button>
