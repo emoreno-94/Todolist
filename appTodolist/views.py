@@ -36,3 +36,15 @@ def change_state_task(request):
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])
+
+
+@csrf_exempt
+def delete_task(request):
+    if request.method == 'POST':
+        task_id = request.POST.get("id")
+        if task_id is not None:
+            task = get_object_or_404(Task, id=task_id)
+            task.delete()
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])

@@ -118,7 +118,6 @@ class TaskViewTest(TestCase):
         self.assertEquals(405, get_response.status_code)
         self.assertEquals(302, post_response.status_code)
 
-
     def test_view_add_task(self):
         # arrange
         client = Client()
@@ -146,13 +145,12 @@ class TaskViewTest(TestCase):
         client = Client()
         task = Task(name="namename")
         task.save()
-        db_task = Task.objects.filter(name="namename").first()
-        state_prev = db_task.done
+        state_prev = task.done
         # act
-        post_response = client.post('/tasks/change-state', {"id": db_task.id})
-        db_task = Task.objects.filter(name="namename").first()
+        post_response = client.post('/tasks/change-state', {"id": task.id})
+        task = Task.objects.filter(name="namename").first()
         # assert
-        self.assertNotEquals(state_prev, db_task.done)
+        self.assertNotEquals(state_prev, task.done)
 
     def test_view_change_state_invalid_id(self):
         # arrange
@@ -161,3 +159,23 @@ class TaskViewTest(TestCase):
         post_response = client.post('/tasks/change-state', {'id': 1})
         # assert
         self.assertEquals(404, post_response.status_code)
+
+    def test_connection_delete_task(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/delete')
+        post_response = client.post('/tasks/delete')
+        # assert
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
+
+    def test_view_delete_task(self):
+        # arrange
+        client = Client()
+        task = Task(name='namename')
+        task.save()
+        # act
+        post_response = client.post('/tasks/delete', {'id': task.id})
+        # assert
+        self.assertRaises(Task.DoesNotExist, Task.objects.get, pk=task.id)

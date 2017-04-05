@@ -10,6 +10,7 @@
                 <tr>
                     <td>Nombre</td>
                     <td>Estado</td>
+                    <td>Eliminar</td>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +29,12 @@
                             <form action="{% url "tasks:change_state" %}" method="POST">
                                 <input type="hidden" value="{{ task.id }}" name="id">
                                 <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{% url "tasks:delete_task" %}" method="POST">
+                                <input type="hidden" value="{{ task.id }}" name="id">
+                                <button type="submit">Eliminar</button>
                             </form>
                         </td>
                     </tr>

@@ -5,4 +5,5 @@ urlpatterns = [
     url(r'^$', views.get_tasks, name="get_tasks"),
     url(r'^add$', views.add_task, name="add_task"),
     url(r'^change-state', views.change_state_task, name="change_state"),
+    url(r'^delete', views.delete_task, name="delete_task"),
 ]
