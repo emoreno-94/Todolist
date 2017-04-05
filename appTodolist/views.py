@@ -1,5 +1,5 @@
-from django.http import HttpResponseNotAllowed
-from django.shortcuts import render, redirect
+from django.http import HttpResponseNotAllowed, HttpResponse, Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from appTodolist.models import Task
 from django.views.decorators.csrf import csrf_exempt
 
@@ -26,12 +26,12 @@ def add_task(request):
 
 
 @csrf_exempt
-def set_done_task(request):
+def change_state_task(request):
     if request.method == 'POST':
         task_id = request.POST.get("id")
         if task_id is not None:
-            task = Task.objects.get(pk=int(task_id))
-            task.complete()
+            task = get_object_or_404(Task, id=task_id)
+            task.change_state()
             task.save()
         return redirect('tasks:get_tasks')
     else:

@@ -25,3 +25,6 @@ class Task(models.Model):
 
     def complete(self):
         self.done = True
+
+    def change_state(self):
+        self.done = not self.done

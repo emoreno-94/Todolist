@@ -15,11 +15,19 @@
             <tbody>
                 {% for task in tasks %}
                     <tr>
-                        <td>{{ task.name }}</td>
                         <td>
-                            <form action="{% url "tasks:set_done_task" %}" method="POST">
+                            {% if task.done %}
+                                <strike>
+                                    {{ task.name }}
+                                </strike>
+                            {% else %}
+                                {{ task.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{% url "tasks:change_state" %}" method="POST">
                                 <input type="hidden" value="{{ task.id }}" name="id">
-                                <button type="submit" {% if task.done %} disabled {% endif %}>{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
+                                <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
                             </form>
                         </td>
                     </tr>

@@ -70,14 +70,18 @@ class TasksTest (TestCase):
         # assert
         self.assertFalse(task.done)
 
-    def test_done(self):
+    def test_change_state(self):
         # arrange
         task = Task(name="Name")
         # act
-        task.complete()
+        prev_state = task.done
+        task.change_state()
+        curr_state = task.done
+        task.change_state()
         # assert
-        self.assertTrue(task.done)
-        
+        self.assertFalse(prev_state)
+        self.assertTrue(curr_state)
+        self.assertFalse(task.done)
 
 class TaskViewTest(TestCase):
     
@@ -127,24 +131,33 @@ class TaskViewTest(TestCase):
         task_db = Task.objects.filter(name='Test').first()
         self.assertIsNotNone(task_db)
 
-    def test_connection_set_done(self):
+    def test_connection_change_state(self):
         # arrange
         client = Client()
         # act
-        get_response = client.get('/tasks/set-done')
-        post_response = client.post('/tasks/set-done')
-        # asserto
+        get_response = client.get('/tasks/change-state')
+        post_response = client.post('/tasks/change-state')
+        # assert
         self.assertEquals(405, get_response.status_code)
         self.assertEquals(302, post_response.status_code)
 
-    def test_view_set_done(self):
+    def test_view_change_state(self):
         # arrange
         client = Client()
         task = Task(name="namename")
         task.save()
         db_task = Task.objects.filter(name="namename").first()
+        state_prev = db_task.done
         # act
-        post_response = client.post('/tasks/set-done', {"id": db_task.id})
+        post_response = client.post('/tasks/change-state', {"id": db_task.id})
         db_task = Task.objects.filter(name="namename").first()
         # assert
-        self.assertTrue(db_task.done)
+        self.assertNotEquals(state_prev, db_task.done)
+
+    def test_view_change_state_invalid_id(self):
+        # arrange
+        client = Client()
+        # act
+        post_response = client.post('/tasks/change-state', {'id': 1})
+        # assert
+        self.assertEquals(404, post_response.status_code)
