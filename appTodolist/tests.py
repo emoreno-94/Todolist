@@ -179,3 +179,26 @@ class TaskViewTest(TestCase):
         post_response = client.post('/tasks/delete', {'id': task.id})
         # assert
         self.assertRaises(Task.DoesNotExist, Task.objects.get, pk=task.id)
+
+    def test_connection_edit_name_task(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/edit-name')
+        post_response = client.post('/tasks/edit-name')
+        # assert
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
+
+    def test_view_edit_name(self):
+        # arrange
+        client = Client()
+        pre_name = 'name'
+        post_name = 'post'
+        task = Task(name=pre_name)
+        task.save()
+        # act
+        post_response = client.post('/tasks/edit-name', {'id': task.id, 'name': post_name})
+        task = Task.objects.get(pk=task.id)
+        # assert
+        self.assertEquals(post_name, task.name)

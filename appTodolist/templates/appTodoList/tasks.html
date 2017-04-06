@@ -8,28 +8,35 @@
         <table>
             <thead>
                 <tr>
-                    <td>Nombre</td>
-                    <td>Estado</td>
-                    <td>Eliminar</td>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
                 {% for task in tasks %}
                     <tr>
                         <td>
+                        <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
                             {% if task.done %}
+                                <span style="color: darkgreen">✓</span>
                                 <strike>
                                     {{ task.name }}
                                 </strike>
                             {% else %}
                                 {{ task.name }}
                             {% endif %}
+                        </span>
                         </td>
                         <td>
                             <form action="{% url "tasks:change_state" %}" method="POST">
                                 <input type="hidden" value="{{ task.id }}" name="id">
                                 <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
                             </form>
+                        </td>
+                        <td>
+                            <button type="button" onclick="edit({{task.id}}, '{{task.name}}')">Editar</button>
                         </td>
                         <td>
                             <form action="{% url "tasks:delete_task" %}" method="POST">
@@ -41,9 +48,25 @@
                 {% endfor %}
             </tbody>
         </table>
+        <br/>
     <form action="{% url "tasks:add_task" %}" method="POST">
-        Nombre: <input type="text" name="name">
+        Nueva tarea: <input type="text" name="name">
         <button type="submit">Agregar</button>
     </form>
+    <form id="form-edit" method="POST" action="{% url "tasks:edit_name" %}">
+        <input id="id" type="hidden" name="id" value="">
+        <input id="name" type="hidden" name="name" value="">
+    </form>
+    <script>
+        function edit(id, old_name) {
+            var name = prompt("Nombre de la tarea:", old_name);
+            if (name != null) {
+                var form = document.getElementById('form-edit');
+                document.getElementById('id').value = id;
+                document.getElementById('name').value = name;
+                form.submit();
+            }
+        }
+    </script>
     </body>
 </html>
