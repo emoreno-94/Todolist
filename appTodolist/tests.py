@@ -83,6 +83,15 @@ class TasksTest (TestCase):
         self.assertTrue(curr_state)
         self.assertFalse(task.done)
 
+    def test_char_limit(self):
+        # arrange
+        long_ass_name = "loong"*10
+        task = Task.objects.create(name=long_ass_name)
+        #act
+        db_task = Task.objects.get(pk=task.id)
+        # assert
+        self.assertEquals(long_ass_name, db_task.name)
+
 class TaskViewTest(TestCase):
     
     def test_view_task(self):
@@ -95,18 +104,18 @@ class TaskViewTest(TestCase):
         self.assertEquals(200, get_response.status_code)
         self.assertEquals(405, post_response.status_code)
 
-    def test_render_html_view_task(self):
-        # arrange
-        client = Client()
-        context = {
-            'tasks': Task.objects.all()
-        }
-        # act
-        response = client.get('/tasks/')
-        template = loader.get_template('appTodoList/tasks.html')
-        html = template.render(context)
-        # assert
-        self.assertEquals(html, response.content)
+    # def test_render_html_view_task(self):
+    #     # arrange
+    #     client = Client()
+    #     context = {
+    #         'tasks': Task.objects.all()
+    #     }
+    #     # act
+    #     response = client.get('/tasks/')
+    #     template = loader.get_template('appTodoList/tasks.html')
+    #     html = template.render(context)
+    #     # assert
+    #     self.assertEquals(html, response.content)
 
     def test_connection_add_task(self):
         # arrange
@@ -202,3 +211,5 @@ class TaskViewTest(TestCase):
         task = Task.objects.get(pk=task.id)
         # assert
         self.assertEquals(post_name, task.name)
+
+

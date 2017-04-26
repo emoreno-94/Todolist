@@ -6,11 +6,11 @@ from django.db import models
 
 
 class TaskList(models.Model):
-    name = models.CharField(max_length=20)
-    
+    name = models.TextField()
+
     def is_empty(self):
         return Task.objects.filter(task_list=self).count() < 1
-    
+
     def add_task(self, new_task):
         self.task_set.add(new_task)
     
@@ -20,7 +20,7 @@ class TaskList(models.Model):
 
 class Task(models.Model):
     done = models.BooleanField(default=False)
-    name = models.CharField(max_length=20)
+    name = models.TextField()
     task_list = models.ForeignKey(TaskList, null=True)
 
     def complete(self):
