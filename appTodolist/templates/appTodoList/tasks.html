@@ -8,6 +8,7 @@
         <table>
             <thead>
                 <tr>
+                    <th colspan="2">Prioridad</th>
                     <th>Nombre</th>
                     <th>Estado</th>
                     <th>Editar</th>
@@ -17,6 +18,18 @@
             <tbody>
                 {% for task in tasks %}
                     <tr>
+                        <td>
+                            <form action="{% url "tasks:increase_priority" %}" method="POST">
+                                <input type="hidden" value="{{ task.id }}" name="id">
+                                <button type="submit">&#11205;</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{% url "tasks:decrease_priority" %}" method="POST">
+                                <input type="hidden" value="{{ task.id }}" name="id">
+                                <button type="submit">&#x2BC6;</button>
+                            </form>
+                        </td>
                         <td>
                         <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
                             {% if task.done %}
