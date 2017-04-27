@@ -92,6 +92,41 @@ class TasksTest (TestCase):
         # assert
         self.assertEquals(long_ass_name, db_task.name)
 
+    def test_priority(self):
+        # arrange
+        task1 = Task.objects.create(name="test1")
+        task2 = Task.objects.create(name="test2")
+        #act
+        db_task1 = Task.objects.get(pk=task1.id)
+        db_task2 = Task.objects.get(pk=task2.id)
+        # assert
+        self.assertEquals(1, db_task1.priority)
+        self.assertEquals(2, db_task2.priority)
+
+    def test_increase_priority(self):
+        # arrange
+        task1 = Task.objects.create(name="test1")
+        task2 = Task.objects.create(name="test2")
+        #act
+        task1.increase_priority()
+        db_task1 = Task.objects.get(pk=task1.id)
+        db_task2 = Task.objects.get(pk=task2.id)
+        # assert
+        self.assertEquals(2, db_task1.priority)
+        self.assertEquals(1, db_task2.priority)
+
+    def test_decrease_priority(self):
+        # arrange
+        task1 = Task.objects.create(name="test1")
+        task2 = Task.objects.create(name="test2")
+        #act
+        task2.decrease_priority()
+        db_task1 = Task.objects.get(pk=task1.id)
+        db_task2 = Task.objects.get(pk=task2.id)
+        # assert
+        self.assertEquals(2, db_task1.priority)
+        self.assertEquals(1, db_task2.priority)
+
 class TaskViewTest(TestCase):
     
     def test_view_task(self):
@@ -212,4 +247,44 @@ class TaskViewTest(TestCase):
         # assert
         self.assertEquals(post_name, task.name)
 
+    def test_connection_increase_priority_task(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/increase-priority')
+        post_response = client.post('/tasks/increase-priority')
+        # assert
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
 
+    def test_view_increase_priority(self):
+        # arrange
+        client = Client()
+        task1 = Task.objects.create(name="task1")
+        task2 = Task.objects.create(name="task2")
+        # act
+        post_response = client.post('/tasks/increase-priority', {'id': task1.id})
+        save_task = Task.objects.get(pk=task1.id)
+        # assert
+        self.assertEquals(save_task.priority, 2)
+
+    def test_connection_decrease_priority_task(self):
+        # arrange
+        client = Client()
+        # act
+        get_response = client.get('/tasks/decrease-priority')
+        post_response = client.post('/tasks/decrease-priority')
+        # assert
+        self.assertEquals(405, get_response.status_code)
+        self.assertEquals(302, post_response.status_code)
+
+    def test_view_decrease_priority(self):
+        # arrange
+        client = Client()
+        task1 = Task.objects.create(name="task1")
+        task2 = Task.objects.create(name="task2")
+        # act
+        post_response = client.post('/tasks/decrease-priority', {'id': task2.id})
+        save_task = Task.objects.get(pk=task2.id)
+        # assert
+        self.assertEquals(save_task.priority, 1)
