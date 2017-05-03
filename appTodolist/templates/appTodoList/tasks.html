@@ -1,67 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Tasks</title>
-    </head>
-    <body>
-        <table>
-            <thead>
+{% extends 'appTodoList/base.html' %}
+
+{% block title %}
+    Tasks
+{% endblock %}
+
+{% block content %}
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th colspan="2">Prioridad</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
                 <tr>
-                    <th colspan="2">Prioridad</th>
-                    <th>Nombre</th>
-                    <th>Estado</th>
-                    <th>Editar</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in tasks %}
-                    <tr>
-                        <td>
-                            <form action="{% url "tasks:increase_priority" %}" method="POST">
-                                <input type="hidden" value="{{ task.id }}" name="id">
-                                <button type="submit">&#11205;</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form action="{% url "tasks:decrease_priority" %}" method="POST">
-                                <input type="hidden" value="{{ task.id }}" name="id">
-                                <button type="submit">&#x2BC6;</button>
-                            </form>
-                        </td>
-                        <td>
-                        <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
-                            {% if task.done %}
-                                <span style="color: darkgreen">✓</span>
-                                <strike>
-                                    {{ task.name }}
-                                </strike>
-                            {% else %}
+                    <td>
+                        <form action="{% url "tasks:increase_priority" %}" method="POST">
+                            <input type="hidden" value="{{ task.id }}" name="id">
+                            <button type="submit">&#11205;</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url "tasks:decrease_priority" %}" method="POST">
+                            <input type="hidden" value="{{ task.id }}" name="id">
+                            <button type="submit">&#x2BC6;</button>
+                        </form>
+                    </td>
+                    <td>
+                    <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
+                        {% if task.done %}
+                            <span style="color: darkgreen">✓</span>
+                            <strike>
                                 {{ task.name }}
-                            {% endif %}
-                        </span>
-                        </td>
-                        <td>
-                            <form action="{% url "tasks:change_state" %}" method="POST">
-                                <input type="hidden" value="{{ task.id }}" name="id">
-                                <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
-                            </form>
-                        </td>
-                        <td>
-                            <button type="button" onclick="edit({{task.id}}, '{{task.name}}')">Editar</button>
-                        </td>
-                        <td>
-                            <form action="{% url "tasks:delete_task" %}" method="POST">
-                                <input type="hidden" value="{{ task.id }}" name="id">
-                                <button type="submit">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <br/>
+                            </strike>
+                        {% else %}
+                            {{ task.name }}
+                        {% endif %}
+                    </span>
+                    </td>
+                    <td>
+                        <form action="{% url "tasks:change_state" %}" method="POST">
+                            <input type="hidden" value="{{ task.id }}" name="id">
+                            <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" onclick="edit({{task.id}}, '{{task.name}}')">Editar</button>
+                    </td>
+                    <td>
+                        <form action="{% url "tasks:delete_task" %}" method="POST">
+                            <input type="hidden" value="{{ task.id }}" name="id">
+                            <button type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
     <form action="{% url "tasks:add_task" %}" method="POST">
         Nueva tarea: <input type="text" name="name">
         <button type="submit">Agregar</button>
@@ -70,6 +70,9 @@
         <input id="id" type="hidden" name="id" value="">
         <input id="name" type="hidden" name="name" value="">
     </form>
+{% endblock %}
+
+{% block js %}
     <script>
         function edit(id, old_name) {
             var name = prompt("Nombre de la tarea:", old_name);
@@ -81,5 +84,4 @@
             }
         }
     </script>
-    </body>
-</html>
+{% endblock %}
