@@ -82,12 +82,15 @@ WSGI_APPLICATION = 'todolist.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASE_URL = dj_database_url.config(conn_max_age=500, default=os.environ.get("DATABASE_URL"))
-print(os.environ.get("DATABASE_URL"))
-print(DATABASE_URL)
 DATABASES = {
-    'default': DATABASE_URL
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
-# DATABASES['default'].update(db_from_env)
+
+if DATABASE_URL:
+    DATABASES['default'].update(DATABASE_URL)
 
 
 # Password validation
