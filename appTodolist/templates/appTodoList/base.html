@@ -4,18 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
     <link href="{% static 'js/semantic.min.js' %}" type="text/css">
     <title>{% block title %}Titulo{% endblock %}</title>
 </head>
 <body>
-    {% block content %}
-        <div class="ui grid">
-          <div class="four wide column"></div>
-          <div class="four wide column"></div>
-          <div class="four wide column"></div>
-          <div class="four wide column"></div>
-        </div>
-    {% endblock %}
+    <div class="ui grid container">
+        {% block content %}
+
+        {% endblock %}
+    </div>
     {% block js %}{% endblock %}
 </body>
 </html>
