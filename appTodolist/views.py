@@ -14,7 +14,6 @@ def get_tasks(request):
         return HttpResponseNotAllowed(['GET'])
 
 
-@csrf_exempt
 def add_task(request):
     if request.method == 'POST':
         if request.POST.get('name'):
@@ -25,7 +24,6 @@ def add_task(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-@csrf_exempt
 def change_state_task(request):
     if request.method == 'POST':
         task_id = request.POST.get("id")
@@ -38,7 +36,6 @@ def change_state_task(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-@csrf_exempt
 def delete_task(request):
     if request.method == 'POST':
         task_id = request.POST.get("id")
@@ -50,7 +47,6 @@ def delete_task(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-@csrf_exempt
 def edit_name(request):
     if request.method == 'POST':
         task_id = request.POST.get('id')
@@ -64,7 +60,6 @@ def edit_name(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-@csrf_exempt
 def increase_priority(request):
     if request.method == 'POST':
         task_id = request.POST.get('id')
@@ -76,7 +71,6 @@ def increase_priority(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-@csrf_exempt
 def decrease_priority(request):
     if request.method == 'POST':
         task_id = request.POST.get('id')

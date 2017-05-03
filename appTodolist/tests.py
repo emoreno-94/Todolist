@@ -139,18 +139,16 @@ class TaskViewTest(TestCase):
         self.assertEquals(200, get_response.status_code)
         self.assertEquals(405, post_response.status_code)
 
-    # def test_render_html_view_task(self):
-    #     # arrange
-    #     client = Client()
-    #     context = {
-    #         'tasks': Task.objects.all()
-    #     }
-    #     # act
-    #     response = client.get('/tasks/')
-    #     template = loader.get_template('appTodoList/tasks.html')
-    #     html = template.render(context)
-    #     # assert
-    #     self.assertEquals(html, response.content)
+    def test_render_html_view_task(self):
+        # arrange
+        client = Client()
+        context = {
+            'tasks': Task.objects.all()
+        }
+        # act
+        response = client.get('/tasks/')
+        # assert
+        self.assertEquals(list(context['tasks']), list(response.context['tasks']))
 
     def test_connection_add_task(self):
         # arrange
