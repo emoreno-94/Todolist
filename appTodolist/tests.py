@@ -111,28 +111,37 @@ class TasksTest (TestCase):
     def test_increase_priority(self):
         # arrange
         task_list = TaskList.objects.create(name="listy")
+        task_list2 = TaskList.objects.create(name="notListy")
         task1 = Task.objects.create(name="test1", task_list=task_list)
+        task_from_another_list = Task.objects.create(name="the namest", task_list=task_list2)
         task2 = Task.objects.create(name="test2", task_list=task_list)
         #act
         task1.increase_priority()
         task1.save()
         db_task1 = Task.objects.get(pk=task1.id)
+        db_task_from_another_list = Task.objects.get(pk=task_from_another_list.id)
         db_task2 = Task.objects.get(pk=task2.id)
         # assert
-        self.assertEquals(2, db_task1.priority)
+        self.assertEquals(3, db_task1.priority)
+        self.assertEquals(2, db_task_from_another_list.priority)
         self.assertEquals(1, db_task2.priority)
 
     def test_decrease_priority(self):
         # arrange
-        task1 = Task.objects.create(name="test1")
-        task2 = Task.objects.create(name="test2")
+        task_list = TaskList.objects.create(name="Listy")
+        task_list2 = TaskList.objects.create(name="notListy")
+        task1 = Task.objects.create(name="test1", task_list=task_list)
+        task_from_another_list = Task.objects.create(name="the namest", task_list=task_list2)
+        task2 = Task.objects.create(name="test2", task_list=task_list)
         #act
         task2.decrease_priority()
         task2.save()
         db_task1 = Task.objects.get(pk=task1.id)
+        db_task_from_another_list = Task.objects.get(pk=task_from_another_list.id)
         db_task2 = Task.objects.get(pk=task2.id)
         # assert
-        self.assertEquals(2, db_task1.priority)
+        self.assertEquals(3, db_task1.priority)
+        self.assertEquals(2, db_task_from_another_list.priority)
         self.assertEquals(1, db_task2.priority)
 
 

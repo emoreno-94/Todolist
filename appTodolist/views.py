@@ -1,14 +1,13 @@
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
 from appTodolist.models import Task, TaskList
-from django.views.decorators.csrf import csrf_exempt
 
 
 def get_tasks(request):
     if request.method == 'GET':
-        tasks = Task.objects.order_by('done', "-priority")
+        lists = TaskList.objects.order_by("-priority")
         return render(request, 'appTodoList/tasks.html', {
-            'task_lists': tasks
+            'task_lists': lists
         })
     else:
         return HttpResponseNotAllowed(['GET'])

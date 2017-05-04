@@ -15,7 +15,7 @@ class TaskList(models.Model):
         self.task_set.add(new_task)
     
     def get_tasks(self):
-        return self.task_set.all()
+        return self.task_set.order_by('done', '-priority')
     
 
 class Task(models.Model):
