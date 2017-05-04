@@ -1,14 +1,13 @@
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
-from appTodolist.models import Task
-from django.views.decorators.csrf import csrf_exempt
+from appTodolist.models import Task, TaskList
 
 
 def get_tasks(request):
     if request.method == 'GET':
-        tasks = Task.objects.order_by('done', "-priority")
+        lists = TaskList.objects.order_by("-priority")
         return render(request, 'appTodoList/tasks.html', {
-            'tasks': tasks
+            'task_lists': lists
         })
     else:
         return HttpResponseNotAllowed(['GET'])
@@ -16,9 +15,21 @@ def get_tasks(request):
 
 def add_task(request):
     if request.method == 'POST':
-        if request.POST.get('name'):
-            task = Task(name=request.POST.get('name'))
-            task.save()
+        name = request.POST.get('task_name')
+        id = request.POST.get('list_id')
+        if name and id:
+            task_list = TaskList.objects.get(pk=id)
+            Task.objects.create(name=name, task_list=task_list)
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+def add_list(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if name:
+            TaskList.objects.create(name=name)
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -66,6 +77,7 @@ def increase_priority(request):
         if task_id is not None:
             task = get_object_or_404(Task, id=task_id)
             task.increase_priority()
+            task.save()
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])
@@ -77,6 +89,7 @@ def decrease_priority(request):
         if task_id is not None:
             task = get_object_or_404(Task, id=task_id)
             task.decrease_priority()
+            task.save()
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])

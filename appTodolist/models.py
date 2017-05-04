@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 class TaskList(models.Model):
     name = models.TextField()
+    priority = models.IntegerField(null=True)
+    colour = models.CharField(max_length=8, default='#FFFFFF')
 
     def is_empty(self):
         return Task.objects.filter(task_list=self).count() < 1
@@ -15,13 +15,13 @@ class TaskList(models.Model):
         self.task_set.add(new_task)
     
     def get_tasks(self):
-        return self.task_set.all()
+        return self.task_set.order_by('done', '-priority')
     
 
 class Task(models.Model):
     done = models.BooleanField(default=False)
     name = models.TextField()
-    priority = models.IntegerField(null=True)
+    priority = models.BigIntegerField(null=True)
     task_list = models.ForeignKey(TaskList, null=True)
 
     def complete(self):
@@ -39,18 +39,16 @@ class Task(models.Model):
 
     def increase_priority(self):
         current_priority = self.priority
-        to_swap = Task.objects.filter(priority__gt=self.priority, done=False).order_by("priority").first()
-        if to_swap :
+        to_swap = Task.objects.filter(priority__gt=self.priority, task_list=self.task_list).order_by("priority").first()
+        if to_swap:
             self.priority = to_swap.priority
             to_swap.priority = current_priority
             to_swap.save()
-            self.save()
 
     def decrease_priority(self):
         current_priority = self.priority
-        to_swap = Task.objects.filter(priority__lt=self.priority, done=False).order_by("-priority").first()
-        if to_swap :
+        to_swap = Task.objects.filter(priority__lt=self.priority, task_list=self.task_list).order_by("-priority").first()
+        if to_swap:
             self.priority = to_swap.priority
             to_swap.priority = current_priority
             to_swap.save()
-            self.save()
