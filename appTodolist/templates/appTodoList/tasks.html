@@ -5,85 +5,139 @@
 {% endblock %}
 
 {% block content %}
-{% for task_list in task_lists %}
-    <h1>{{ task_list.name }}</h1>
-    <table class="ui celled table">
-        <thead>
-            <tr>
-                <th colspan="2">Prioridad</th>
-                <th>Nombre</th>
-                <th>Estado</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in task_list.get_tasks %}
-                <tr>
-                    <td>
-                        <form action="{% url "tasks:increase_priority" %}" method="POST">
-                            <input type="hidden" value="{{ task.id }}" name="id">
-                            <button type="submit"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="{% url "tasks:decrease_priority" %}" method="POST">
-                            <input type="hidden" value="{{ task.id }}" name="id">
-                            <button type="submit"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
-                        </form>
-                    </td>
-                    <td>
-                    <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
-                        {% if task.done %}
-                            <span style="color: darkgreen">✓</span>
-                            <strike>
-                                {{ task.name }}
-                            </strike>
-                        {% else %}
-                            {{ task.name }}
-                        {% endif %}
-                    </span>
-                    </td>
-                    <td>
-                        <form action="{% url "tasks:change_state" %}" method="POST">
-                            <input type="hidden" value="{{ task.id }}" name="id">
-                            <button type="submit">{% if task.done %}Hecho{% else %}Pendiente{% endif %}</button>
-                        </form>
-                    </td>
-                    <td>
-                        <button type="button" onclick="edit({{task.id}}, '{{task.name}}')"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                    </td>
-                    <td>
-                        <form action="{% url "tasks:delete_task" %}" method="POST">
-                            <input type="hidden" value="{{ task.id }}" name="id">
-                            <button type="submit"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <br>
+    <div class="ui two column grid">
+        {% for task_list in task_lists %}
+            <div class="ui column">
+                <h1>{{ task_list.name }}</h1>
+                <table class="ui celled table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Prioridad</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in task_list.get_tasks %}
+                            <tr>
+                                <td>
+                                    <form action="{% url "tasks:increase_priority" %}" method="POST">
+                                        <input type="hidden" value="{{ task.id }}" name="id">
+                                        <button type="submit" class="ui icon button"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{% url "tasks:decrease_priority" %}" method="POST">
+                                        <input type="hidden" value="{{ task.id }}" name="id">
+                                        <button type="submit" class="ui icon button"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                                    </form>
+                                </td>
+                                <td>
+                                <span onclick="edit({{task.id}}, '{{task.name}}')" style="cursor: pointer">
+                                    {% if task.done %}
+                                        <span style="color: darkgreen">✓</span>
+                                        <strike>{{ task.name }}</strike>
+                                    {% else %}
+                                        {{ task.name }}
+                                    {% endif %}
+                                </span>
+                                </td>
+                                <td>
+                                    <form action="{% url "tasks:change_state" %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{ task.id }}" name="id">
+                                        <button type="submit" class="ui button">
+                                            {% if task.done %}Hecho{% else %}Pendiente{% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <button type="button" class="ui icon button" onclick="edit({{task.id}}, '{{task.name}}')">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <form action="{% url "tasks:delete_task" %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{ task.id }}" name="id">
+                                        <button type="submit" class="ui icon red button">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-    <br/>
-    <form action="{% url "tasks:add_task" %}" method="POST">
-        {% csrf_token %}
-        Nueva tarea: <input type="text" name="task_name">
-        <input type="hidden" name="list_id" value="{{task_list.id}}">
-        <button type="submit">Agregar</button>
-    </form>
-{% endfor %}
-    </br>
-    </br>
-     <form action="{% url "tasks:add_list" %}" method="POST">
-        {% csrf_token %}
-        Nueva lista: <input type="text" name="name">
-        <button type="submit">Agregar lista</button>
-    </form>
+                <br/>
+                <form action="{% url "tasks:add_task" %}" class="ui form" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="list_id" value="{{task_list.id}}">
+                    <!--Nueva tarea:-->
+                    <div class="field">
+                        <label>Nueva Tarea:</label>
+                        <div class="ui action input">
+                            <input type="text" name="task_name" placeholder="Nombre de la tarea">
+                            <button type="submit" class="ui button">Agregar tarea</button>
+                        </div>
+                    </div>
+                </form>
+{#                <div class="ui cards">#}
+{#                {% for task in task_list.get_tasks %}#}
+{#                <div class="card">#}
+{#                    <div class="content">#}
+{#                      <div class="header">#}
+{#                        {{ task.name }}#}
+{#                          <div class="right floated">#}
+{#                              <a><i class="fa fa-chevron-up"></i></a>#}
+{#                              <a><i class="fa fa-chevron-down"></i></a>#}
+{#                          </div>#}
+{#                      </div>#}
+{#                      <div class="meta">#}
+{#                        {% if task.done %}Completada{% else %}Pendiente{% endif %}#}
+{#                      </div>#}
+{#                      <div class="description">#}
+{#                        {{ task.description }}#}
+{#                      </div>#}
+{#                    </div>#}
+{#                    <div class="extra content">#}
+{#                      <div class="ui two buttons">#}
+{#                        {% if task.done %}#}
+{#                          <div class="ui basic yellow button">Pendiente</div>#}
+{#                        {% else %}#}
+{#                          <div class="ui basic green button">Completar</div>#}
+{#                        {% endif %}#}
+{#                        <div class="ui basic red button">Eliminar</div>#}
+{#                      </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                {% endfor %}#}
+{#                </div>#}
+            </div>
+        {% endfor %}
+        <div class="ui column">
+            <form action="{% url "tasks:add_list" %}" class="ui form" method="POST">
+                {% csrf_token %}
+                <div class="field">
+                    <label>Nueva lista:</label>
+                    <div class="ui action input">
+                        <input type="text" name="name">
+                        <button type="submit" class="ui teal button">Agregar lista</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <form id="form-edit" method="POST" action="{% url "tasks:edit_name" %}">
         {% csrf_token %}
         <input id="id" type="hidden" name="id" value="">
         <input id="name" type="hidden" name="name" value="">
     </form>
+
 {% endblock %}
 
 {% block js %}

@@ -26,6 +26,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='task',
             name='task_list',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='appTodolist.TaskList'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='appTodolist.TaskList'),
         ),
     ]
