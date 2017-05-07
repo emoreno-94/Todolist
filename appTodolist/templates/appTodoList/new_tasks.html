@@ -1,0 +1,88 @@
+{% extends 'appTodoList/base.html' %}
+
+{% block title %}
+    Tareas
+{% endblock %}
+
+{% block content %}
+    <div class="ui three column grid" style="margin: 1%;">
+        {% for list in task_lists %}
+            <div class="column">
+                <div class="ui segments">
+                    <div class="ui piled secondary segment">
+                        <h3 class="ui center aligned header">
+                            <span class="ui pull-left">
+                                <i class="fa fa-pencil"></i>
+                            </span>
+                            {{ list.name }}
+                            <span class="ui pull-right">
+                                <i class="fa fa-close"></i>
+                            </span>
+                        </h3>
+                    </div>
+                    {% for task in list.get_tasks %}
+                        <div class="ui piled {% if task.done %}tertiary{% endif %} segment">
+                            <span id="move_task" style="color: gray; cursor: move">
+                                <i class="fa fa-ellipsis-v" style="margin-right: -2px; margin-left: -3px;"></i>
+                                <i class="fa fa-ellipsis-v" style="margin-right: 3px;"></i>
+                            </span>
+                            <i id="complete_task" class="{% if task.done %}green{% endif %} icon">
+                                <form action="{% url "tasks:change_state" %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{ task.id }}" name="id">
+                                    <button type="submit" style="border: none; background: none; padding: 0;">
+                                        <i class="fa fa-{% if task.done %}check-{% endif %}square-o"></i>
+                                    </button>
+                                </form>
+                            </i>
+                            {% if task.done %}<strike style="color: gray">{% endif %}
+                                {{ task.name }}
+                            {% if task.done %}</strike>{% endif %}
+                            <span class="ui pull-right">
+                                <i id="edit_task" class="icon">
+                                    <span style="cursor: pointer" onclick="edit({{ task.id }}, '{{ task.name }}')">
+                                        <i class="fa fa-pencil"></i>
+                                    </span>
+                                </i>
+                                <i id="delete_task" class="fa fa-close"></i>
+                            </span>
+                        </div>
+                    {% endfor %}
+                    <div id="add_task" class="ui piled secondary segment">
+                        <form action="{% url "tasks:add_task" %}" class="ui form" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="list_id" value="{{ list.id }}">
+                            <div class="field">
+                                <div class="ui action input">
+                                    <input type="text" name="task_name" placeholder="Agregar tarea">
+                                    <button type="submit" class="ui button">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <form id="form-edit" method="POST" action="{% url "tasks:edit_name" %}">
+        {% csrf_token %}
+        <input id="id" type="hidden" name="id" value="">
+        <input id="name" type="hidden" name="name" value="">
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function edit(id, old_name) {
+            var name = prompt("Nombre de la tarea:", old_name);
+            if (name != null) {
+                var form = document.getElementById('form-edit');
+                document.getElementById('id').value = id;
+                document.getElementById('name').value = name;
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}

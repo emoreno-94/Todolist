@@ -9,11 +9,7 @@
     <title>{% block title %}Titulo{% endblock %}</title>
 </head>
 <body>
-    <div class="ui container">
-        {% block content %}
-
-        {% endblock %}
-    </div>
+    {% block content %}{% endblock %}
     {% block js %}{% endblock %}
 </body>
 </html>

@@ -6,7 +6,7 @@ from appTodolist.models import Task, TaskList
 def get_tasks(request):
     if request.method == 'GET':
         lists = TaskList.objects.order_by("-priority")
-        return render(request, 'appTodoList/tasks.html', {
+        return render(request, 'appTodoList/new_tasks.html', {
             'task_lists': lists
         })
     else:
