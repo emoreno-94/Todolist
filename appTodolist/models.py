@@ -45,7 +45,7 @@ class Task(models.Model):
     done = models.BooleanField(default=False)
     name = models.TextField()
     priority = models.BigIntegerField(null=True)
-    task_list = models.ForeignKey(TaskList, null=True)
+    task_list = models.ForeignKey(TaskList, null=True, on_delete=models.CASCADE)
 
     def complete(self):
         self.done = True
@@ -62,7 +62,7 @@ class Task(models.Model):
 
     def increase_priority(self):
         current_priority = self.priority
-        to_swap = Task.objects.filter(priority__gt=self.priority, task_list=self.task_list).order_by("priority").first()
+        to_swap = Task.objects.filter(priority__gt=self.priority, task_list=self.task_list, done=False).order_by("priority").first()
         if to_swap:
             self.priority = to_swap.priority
             to_swap.priority = current_priority
@@ -70,7 +70,7 @@ class Task(models.Model):
 
     def decrease_priority(self):
         current_priority = self.priority
-        to_swap = Task.objects.filter(priority__lt=self.priority, task_list=self.task_list).order_by("-priority").first()
+        to_swap = Task.objects.filter(priority__lt=self.priority, task_list=self.task_list, done=False).order_by("-priority").first()
         if to_swap:
             self.priority = to_swap.priority
             to_swap.priority = current_priority
