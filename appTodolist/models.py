@@ -8,6 +8,13 @@ class TaskList(models.Model):
     priority = models.IntegerField(null=True)
     colour = models.CharField(max_length=8, default='#FFFFFF')
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if not self.pk:
+            last = TaskList.objects.order_by("-priority").first()
+            self.priority = last.priority + 1 if last else 1
+        super(TaskList, self).save()
+
     def is_empty(self):
         return Task.objects.filter(task_list=self).count() < 1
 
@@ -16,6 +23,22 @@ class TaskList(models.Model):
     
     def get_tasks(self):
         return self.task_set.order_by('done', '-priority')
+
+    def increase_priority(self):
+        current_priority = self.priority
+        to_swap = TaskList.objects.filter(priority__gt=self.priority).order_by("priority").first()
+        if to_swap:
+            self.priority = to_swap.priority
+            to_swap.priority = current_priority
+            to_swap.save()
+
+    def decrease_priority(self):
+        current_priority = self.priority
+        to_swap = TaskList.objects.filter(priority__lt=self.priority).order_by("-priority").first()
+        if to_swap:
+            self.priority = to_swap.priority
+            to_swap.priority = current_priority
+            to_swap.save()
     
 
 class Task(models.Model):

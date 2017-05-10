@@ -71,7 +71,7 @@ def edit_name(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-def increase_priority(request):
+def increase_priority_task(request):
     if request.method == 'POST':
         task_id = request.POST.get('id')
         if task_id is not None:
@@ -83,13 +83,48 @@ def increase_priority(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-def decrease_priority(request):
+def decrease_priority_task(request):
     if request.method == 'POST':
         task_id = request.POST.get('id')
         if task_id is not None:
             task = get_object_or_404(Task, id=task_id)
             task.decrease_priority()
             task.save()
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+def increase_priority_list(request):
+    if request.method == 'POST':
+        list_id = request.POST.get('id')
+        if list_id is not None:
+            list1 = get_object_or_404(TaskList, id=list_id)
+            list1.increase_priority()
+            list1.save()
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+def decrease_priority_list(request):
+    if request.method == 'POST':
+        list_id = request.POST.get('id')
+        if list_id is not None:
+            list1 = get_object_or_404(TaskList, id=list_id)
+            list1.decrease_priority()
+            list1.save()
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])
+
+
+def delete_list(request):
+    if request.method == 'POST':
+        list_id = request.POST.get("id")
+        if list_id is not None:
+            list1 = get_object_or_404(TaskList, id=list_id)
+            list1.delete()
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])
