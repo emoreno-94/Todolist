@@ -6,7 +6,7 @@ from django.db import models
 class TaskList(models.Model):
     name = models.TextField()
     priority = models.IntegerField(null=True)
-    # colour = models.CharField(max_length=8, default='#FFFFFF')
+    colour = models.CharField(max_length=8, default='#FFFFFF')
     # COLOR_CHOICE = (
     #     ('Por defecto', 'standard'),
     #     ('Rojo', 'red'),
