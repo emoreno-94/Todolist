@@ -38,14 +38,24 @@
         {% for list in task_lists %}
             <div class="column">
                 <div class="ui segments">
-                    <div class="ui piled secondary segment">
+                    <div class="ui piled secondary inverted blue segment">
                         <h3 class="ui center aligned header">
                             <span class="ui pull-left">
-                                <i class="fa fa-pencil"></i>
+                                <span style="cursor: pointer" onclick="increase_priority_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-chevron-left"></i>
+                                </span>
+                                <span style="cursor: pointer" onclick="decrease_priority_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-chevron-right"></i>
+                                </span>
                             </span>
                             {{ list.name }}
                             <span class="ui pull-right">
-                                <i class="fa fa-close"></i>
+                                <span style="cursor: pointer" onclick="edit_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-pencil" style="margin-right:3px"></i>
+                                </span>
+                                <span onclick="delete_list({{ list.id }})" style="cursor: pointer">
+                                    <i id="delete_task" class="fa fa-close"></i>
+                                </span>
                             </span>
                         </h3>
                     </div>
@@ -106,10 +116,11 @@
         {% endfor %}
     </div>
     <div id="formularios">
-        <form id="form-edit" method="POST" action="{% url "tasks:edit_name" %}">
+        <!--Tarea-->
+        <form id="form-edit-task" method="POST" action="{% url "tasks:edit_name" %}">
             {% csrf_token %}
-            <input id="id_edit" type="hidden" name="id" value="">
-            <input id="name" type="hidden" name="name" value="">
+            <input id="id_edit_task" type="hidden" name="id" value="">
+            <input id="task_name" type="hidden" name="name" value="">
         </form>
         <form id="form-increase-task" method="POST" action="{% url "tasks:increase_priority_task" %}">
             {% csrf_token %}
@@ -123,6 +134,24 @@
             {% csrf_token %}
             <input id="id_delete_task" type="hidden" name="id" value="">
         </form>
+        <!--Lista-->
+        <form id="form-edit-list" method="POST" action="{% url "tasks:edit_list" %}">
+            {% csrf_token %}
+            <input id="id_edit_list" type="hidden" name="id" value="">
+            <input id="list_name" type="hidden" name="name" value="">
+        </form>
+        <form id="form-increase-list" method="POST" action="{% url "tasks:increase_priority_list" %}">
+            {% csrf_token %}
+            <input id="id_increase_list" type="hidden" name="id" value="">
+        </form>
+        <form id="form-decrease-list" method="POST" action="{% url "tasks:decrease_priority_list" %}">
+            {% csrf_token %}
+            <input id="id_decrease_list" type="hidden" name="id" value="">
+        </form>
+        <form id="form-delete-list" method="POST" action="{% url "tasks:delete_list" %}">
+            {% csrf_token %}
+            <input id="id_delete_list" type="hidden" name="id" value="">
+        </form>
     </div>
 {% endblock %}
 
@@ -132,8 +161,8 @@
             var name = prompt("Nombre de la tarea:", old_name);
             if (name != null) {
                 var form = document.getElementById('form-edit');
-                document.getElementById('id_edit').value = id;
-                document.getElementById('name').value = name;
+                document.getElementById('id_edit_task').value = id;
+                document.getElementById('task_name').value = name;
                 form.submit();
             }
         }
@@ -158,6 +187,37 @@
                 form.submit();
             }
         }
-
+    </script>
+    <script>
+        function edit_list(id, old_name) {
+            var name = prompt("Nombre de la Lista:", old_name);
+            if (name != null) {
+                var form = document.getElementById('form-edit-list');
+                document.getElementById('id_edit_list').value = id;
+                document.getElementById('list_name').value = name;
+                form.submit();
+            }
+        }
+        function increase_priority_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-increase-list');
+                document.getElementById('id_increase_list').value = id;
+                form.submit();
+            }
+        }
+        function decrease_priority_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-decrease-list');
+                document.getElementById('id_decrease_list').value = id;
+                form.submit();
+            }
+        }
+        function delete_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-delete-list');
+                document.getElementById('id_delete_list').value = id;
+                form.submit();
+            }
+        }
     </script>
 {% endblock %}

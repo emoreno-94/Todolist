@@ -6,13 +6,26 @@ from django.db import models
 class TaskList(models.Model):
     name = models.TextField()
     priority = models.IntegerField(null=True)
-    colour = models.CharField(max_length=8, default='#FFFFFF')
+    # colour = models.CharField(max_length=8, default='#FFFFFF')
+    # COLOR_CHOICE = (
+    #     ('Por defecto', 'standard'),
+    #     ('Rojo', 'red'),
+    #     ('Naranjo', 'orange'),
+    #     ('Amarillo', 'yellow'),
+    #     ('Verde', 'green'),
+    #     ('Azul', 'blue'),
+    #     ('Morado', 'violet'),
+    #     ('Rosado', 'pink'),
+    # )
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         if not self.pk:
             last = TaskList.objects.order_by("-priority").first()
-            self.priority = last.priority + 1 if last else 1
+            if last:
+                self.priority = last.priority + 1 if last.priority else 1
+            else:
+                self.priority = 1
         super(TaskList, self).save()
 
     def is_empty(self):
