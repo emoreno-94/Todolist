@@ -160,7 +160,7 @@
         function edit(id, old_name) {
             var name = prompt("Nombre de la tarea:", old_name);
             if (name != null) {
-                var form = document.getElementById('form-edit');
+                var form = document.getElementById('form-edit-task');
                 document.getElementById('id_edit_task').value = id;
                 document.getElementById('task_name').value = name;
                 form.submit();
