@@ -1,0 +1,223 @@
+{% extends 'appTodoList/base.html' %}
+
+{% block title %}
+    Tareas
+{% endblock %}
+
+{% block content %}
+    <br>
+    <div id="header">
+        <h2 class="ui center aligned icon header">
+            <span class="icon">
+                <i class="fa fa-check-square-o"></i>
+            </span>
+            <div class="content">
+                TodoList
+                <div class="sub header">Recuerda y administra tus tareas pendientes</div>
+            </div>
+        </h2>
+        <div class="ui three column centered grid">
+            <form action="{% url "tasks:add_list" %}" class="ui two column wide form" method="POST">
+                {% csrf_token %}
+                <div class="field">
+                    <div class="ui action input">
+                        <input type="text" name="name" placeholder="Nueva lista">
+                        <button type="submit" class="ui button">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <br>
+        <div class="ui horizontal divider">
+            Mis Listas de Tareas
+        </div>
+    </div>
+    <div id="listas" class="ui three column grid" style="margin: 1%;">
+        {% for list in task_lists %}
+            <div class="column">
+                <div class="ui segments">
+                    <div class="ui piled secondary segment">
+                        <h3 class="ui center aligned header">
+                            <span class="ui pull-left">
+                                <span style="cursor: pointer" onclick="increase_priority_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-chevron-left"></i>
+                                </span>
+                                <span style="cursor: pointer" onclick="decrease_priority_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-chevron-right"></i>
+                                </span>
+                            </span>
+                            {{ list.name }}
+                            <span class="ui pull-right">
+                                <span style="cursor: pointer" onclick="edit_list({{ list.id }}, '{{ list.name }}')">
+                                    <i class="fa fa-pencil" style="margin-right:3px"></i>
+                                </span>
+                                <span onclick="delete_list({{ list.id }})" style="cursor: pointer">
+                                    <i id="delete_task" class="fa fa-close"></i>
+                                </span>
+                            </span>
+                        </h3>
+                    </div>
+                    {% for task in list.get_tasks %}
+                        <div class="ui piled {% if task.done %}tertiary{% endif %} segment">
+{#                            <span id="move_task" style="color: gray; cursor: move">#}
+{#                                <i class="fa fa-ellipsis-v" style="margin-right: -2px; margin-left: -3px;"></i>#}
+{#                                <i class="fa fa-ellipsis-v" style="margin-right: 3px;"></i>#}
+{#                            </span>#}
+                            <span id="move_task" style="color: gray;">
+                                <span onclick="increase_priority_task({{ task.id }})" style="cursor: pointer">
+                                    <i class="fa fa-chevron-up" style="margin-right: -2px; margin-left: -3px;"></i>
+                                </span>
+                                <span onclick="decrease_priority_task({{ task.id }})" style="cursor: pointer">
+                                    <i class="fa fa-chevron-down" style="margin-right: 3px;"></i>
+                                </span>
+                            </span>
+                            <i id="complete_task" class="{% if task.done %}green{% endif %} icon">
+                                <form action="{% url "tasks:change_state" %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{ task.id }}" name="id">
+                                    <button type="submit" style="border: none; background: none; padding: 0;">
+                                        <i class="fa fa-{% if task.done %}check-{% endif %}square-o"></i>
+                                    </button>
+                                </form>
+                            </i>
+                            {% if task.done %}<strike style="color: gray">{% endif %}
+                                {{ task.name }}
+                            {% if task.done %}</strike>{% endif %}
+                            <span class="ui pull-right">
+                                <i id="edit_task" class="icon">
+                                    <span style="cursor: pointer" onclick="edit({{ task.id }}, '{{ task.name }}')">
+                                        <i class="fa fa-pencil"></i>
+                                    </span>
+                                </i>
+                                <span onclick="delete_task({{ task.id }})" style="cursor: pointer">
+                                    <i id="delete_task" class="fa fa-close"></i>
+                                </span>
+                            </span>
+                        </div>
+                    {% endfor %}
+                    <div id="add_task" class="ui piled secondary segment">
+                        <form action="{% url "tasks:add_task" %}" class="ui form" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="list_id" value="{{ list.id }}">
+                            <div class="field">
+                                <div class="ui action input">
+                                    <input type="text" name="task_name" placeholder="Agregar tarea">
+                                    <button type="submit" class="ui button">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="formularios">
+        <!--Tarea-->
+        <form id="form-edit-task" method="POST" action="{% url "tasks:edit_name" %}">
+            {% csrf_token %}
+            <input id="id_edit_task" type="hidden" name="id" value="">
+            <input id="task_name" type="hidden" name="name" value="">
+        </form>
+        <form id="form-increase-task" method="POST" action="{% url "tasks:increase_priority_task" %}">
+            {% csrf_token %}
+            <input id="id_increase_task" type="hidden" name="id" value="">
+        </form>
+        <form id="form-decrease-task" method="POST" action="{% url "tasks:decrease_priority_task" %}">
+            {% csrf_token %}
+            <input id="id_decrease_task" type="hidden" name="id" value="">
+        </form>
+        <form id="form-delete-task" method="POST" action="{% url "tasks:delete_task" %}">
+            {% csrf_token %}
+            <input id="id_delete_task" type="hidden" name="id" value="">
+        </form>
+        <!--Lista-->
+        <form id="form-edit-list" method="POST" action="{% url "tasks:edit_list" %}">
+            {% csrf_token %}
+            <input id="id_edit_list" type="hidden" name="id" value="">
+            <input id="list_name" type="hidden" name="name" value="">
+        </form>
+        <form id="form-increase-list" method="POST" action="{% url "tasks:increase_priority_list" %}">
+            {% csrf_token %}
+            <input id="id_increase_list" type="hidden" name="id" value="">
+        </form>
+        <form id="form-decrease-list" method="POST" action="{% url "tasks:decrease_priority_list" %}">
+            {% csrf_token %}
+            <input id="id_decrease_list" type="hidden" name="id" value="">
+        </form>
+        <form id="form-delete-list" method="POST" action="{% url "tasks:delete_list" %}">
+            {% csrf_token %}
+            <input id="id_delete_list" type="hidden" name="id" value="">
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function edit(id, old_name) {
+            var name = prompt("Nombre de la tarea:", old_name);
+            if (name != null) {
+                var form = document.getElementById('form-edit');
+                document.getElementById('id_edit_task').value = id;
+                document.getElementById('task_name').value = name;
+                form.submit();
+            }
+        }
+        function increase_priority_task(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-increase-task');
+                document.getElementById('id_increase_task').value = id;
+                form.submit();
+            }
+        }
+        function decrease_priority_task(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-decrease-task');
+                document.getElementById('id_decrease_task').value = id;
+                form.submit();
+            }
+        }
+        function delete_task(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-delete-task');
+                document.getElementById('id_delete_task').value = id;
+                form.submit();
+            }
+        }
+    </script>
+    <script>
+        function edit_list(id, old_name) {
+            var name = prompt("Nombre de la Lista:", old_name);
+            if (name != null) {
+                var form = document.getElementById('form-edit-list');
+                document.getElementById('id_edit_list').value = id;
+                document.getElementById('list_name').value = name;
+                form.submit();
+            }
+        }
+        function increase_priority_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-increase-list');
+                document.getElementById('id_increase_list').value = id;
+                form.submit();
+            }
+        }
+        function decrease_priority_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-decrease-list');
+                document.getElementById('id_decrease_list').value = id;
+                form.submit();
+            }
+        }
+        function delete_list(id) {
+            if (id >= 1) {
+                var form = document.getElementById('form-delete-list');
+                document.getElementById('id_delete_list').value = id;
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}
