@@ -128,3 +128,15 @@ def delete_list(request):
         return redirect('tasks:get_tasks')
     else:
         return HttpResponseNotAllowed(['POST'])
+
+def edit_list(request):
+    if request.method == 'POST':
+        list_id = request.POST.get("id")
+        task_list_name = request.POST.get('name')
+        if list_id is not None:
+            list1 = get_object_or_404(TaskList, id=list_id)
+            list1.name = task_list_name
+            list1.save()
+        return redirect('tasks:get_tasks')
+    else:
+        return HttpResponseNotAllowed(['POST'])

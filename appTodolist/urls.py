@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^decrease-priority-task$', views.decrease_priority_task, name="decrease_priority_task"),
     url(r'^increase-priority-list$', views.increase_priority_list, name="increase_priority_list"),
     url(r'^decrease-priority-list$', views.decrease_priority_list, name="decrease_priority_list"),
+    url(r'^edit-list$', views.edit_list, name="edit_list")
 ]
