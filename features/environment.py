@@ -21,3 +21,11 @@ def after_all(context):
 def before_feature(context, feature):
     # Code to be executed each time a feature is going to be tested
     pass
+
+
+def before_scenario(context, scenario):
+    list_db = TaskList.objects.create(name='list')
+    Task.objects.create(name='task_1', task_list=list_db)
+    Task.objects.create(name='task_2', task_list=list_db)
+    Task.objects.create(name='task_3', task_list=list_db)
+    list_db.save()

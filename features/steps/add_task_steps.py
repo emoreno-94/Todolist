@@ -1,16 +1,8 @@
 from behave import given, when, then
 
-from appTodolist.models import TaskList, Task
-
 
 @given(u'I go to "{url}"')
 def step_impl(context, url):
-    list_db = TaskList.objects.create(name='list')
-    Task.objects.create(name='task_1', task_list=list_db)
-    Task.objects.create(name='task_2', task_list=list_db)
-    Task.objects.create(name='task_3', task_list=list_db)
-    list_db.save()
-
     br = context.browser
     br.get(context.base_url + url)
 
@@ -31,4 +23,4 @@ def step_impl(context, list_number, text):
 @then(u'I should see "{text}"')
 def step_impl(context, text):
     br = context.browser
-    raise NotImplementedError(u'STEP: Then I should see "Buy bread and milk and beer, it\'s friday!!!"')
+    assert text in br.page_source
