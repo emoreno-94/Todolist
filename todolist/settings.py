@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appTodolist.apps.ApptodolistConfig',
+    'behave_django',
 ]
 
 MIDDLEWARE_CLASSES = [

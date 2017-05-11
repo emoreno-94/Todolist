@@ -103,8 +103,8 @@
                             <input type="hidden" name="list_id" value="{{ list.id }}">
                             <div class="field">
                                 <div class="ui action input">
-                                    <input type="text" name="task_name" placeholder="Agregar tarea">
-                                    <button type="submit" class="ui button">
+                                    <input id="task_name_{{ list.id }}" type="text" name="task_name" placeholder="Agregar tarea">
+                                    <button id="button_add_{{ list.id }}" type="submit" class="ui button btn-add-task">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
