@@ -48,7 +48,7 @@
                                     <i class="fa fa-chevron-right"></i>
                                 </span>
                             </span>
-                            {{ list.name }}
+                            {{ list.name | truncatechars:33 }}
                             <span class="ui pull-right">
                                 <span style="cursor: pointer" onclick="edit_list({{ list.id }}, '{{ list.name }}')">
                                     <i class="fa fa-pencil" style="margin-right:3px"></i>
@@ -82,9 +82,11 @@
                                     </button>
                                 </form>
                             </i>
+                            <span style="">
                             {% if task.done %}<strike style="color: gray">{% endif %}
-                                {{ task.name }}
+                                {{ task.name | truncatechars:40 }}
                             {% if task.done %}</strike>{% endif %}
+                            </span>
                             <span class="ui pull-right">
                                 <i id="edit_task" class="icon">
                                     <span style="cursor: pointer" onclick="edit({{ task.id }}, '{{ task.name }}')">
